@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainBoost | Dashboard</title>
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="shortcut icon" href="image.jpg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="image.jpg" alt="logo" class="brand-logo">
+                <span class="brand-text">BrainBoost</span>
+            </div>
+
+            <nav class="menu">
+                <button class="menu-item active" data-view="home">🏠 Dashboard</button>
+                <button class="menu-item" data-view="search">🔎 Search Topics</button>
+                <button class="menu-item" data-view="quizzes"> 📝 Quizzes</button>
+                <button class="menu-item" data-view="planner">📅 Planner</button>
+                <button class="menu-item" data-view="progress"> 📊 Progress</button>
+                <button class="menu-item" data-view="settings">⚙️ Settings</button>
+            
+            </nav>
+            <div class="sidebar-footer">
+                <button  id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <div class="search-inline">
+                        <input id="quickSearch" placeholder="Quick search topic (e.g. recursion )" />
+                        <button id="quickSearchBtn">Search</button>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="user-greeting">
+                        <div class="user-info">
+                            <div class="greeting">Welcome,</div>
+                            <div id="usernameSmall" class="user-name">User</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content">
+
+                <!-- HOME / Dashboard View -->
+
+                <div class="view" id="homeView">
+                    <div class="cards">
+                        <div class="card">
+                            <div class="card-title">Study Hours (week)</div>
+                            <div class="card-value" id="hoursWeek">0h</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Completed Quizzes</div>
+                            <div class="card-value" id="completedQuizzes">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">Topics Learned</div>
+                            <div class="card-value" id="topicsLearned">0</div>
+                        </div>
+        
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Continue Learning</h2>
+                            <small id="continueSubtitle">Pick up where you left off</small>
+                        </div>
+                        <div class="continue-grid" id="continueGrid">
+                            <!-- Dynamic content goes here -->
+                        </div>
+                    </div>
+
+                    <div class="panel quick-actions">
+                        <button class="action" id="actionSearch">🔎 Search Topic</button>
+                        <button class="action" id="actionQuiz">📝 Take Quiz</button>
+                        <button class="action" id="actionPlan">📅 Plan Study</button>
+                        <button class="action" id="actionProgress">📊 View Progress</button>
+                    </div>
+                </div>
+
+                <div class="view hidden" id="searchView">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Search Topics</h2>
+                            <small>Get summaries and examples</small>
+                        </div>
+
+                        <div class="search-box">
+                            <input  id="topicQuery" placeholder="Enter topic (e.g. binary search) " />
+                            <button id="topicSearchBtn">Search</button>
+                        </div>
+
+                        <div id="searchResults" class="search-results">
+                            <!-- summary & examples -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="view hidden" id="quizzesView">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Quizzes</h2>
+                        </div>
+
+                <div class="quiz-controls">
+                    <input  id="quizTopic" placeholder="Topic for quiz" />
+                    <select id="quizDifficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                    <button id="generateQuizBtn">Generate Quiz</button>
+                </div>
+
+                <div id="quizContainer" class="quiz-container">
+                    <!-- questions here-->
+                </div>
+            </div>
+        </div>
+
+        <div class="view hidden" id="plannerView">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Study Planner</h2>
+                </div>
+
+                <form id="plannerForm" class="planner-form">
+                    <input id="planTitle" placeholder="Task title" required />
+                    <input type="date" id="planDate" required />
+                    <input type="time" id="planTime" required />
+                    <button type="submit">Add to Planner</button>
+                </form>
+
+                <ul id="plannerList" class="planner-list">
+                    <!-- dynamic -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="view hidden" id="progressView">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Progress</h2>
+                    <small>Weekly activity & completion</small>
+                </div>
+
+                <div class="chart-row">
+                    <canvas id="activityChart" width="400" height="200"></canvas>
+                    <canvas id="completionChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="view hidden" id="settingsView">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Settings</h2>
+                </div>
+                <form id="settingsForm" class="settings-form">
+                    <label >Nickname</label>
+                    <input id="settingsName" />
+                    <label>favorite_subject</label>
+                    <input id="favoriteSubject" />
+                    <label>Theme</label>
+                    <select  id="settingsTheme">
+                        <option value="light">🌞Light</option>
+                        <option value="dark">🌑Dark</option>
+                    </select>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+            </div>
+            </section>
+        </main>
+    </div>
+<script src="scripts/dashboard.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
